@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:news_app/src/view/widgets/search_bar.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -9,7 +10,14 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('NEWS App'),
+      ),
+      body: Column(
+        children: [
+          SearchBar()
+        ],
+      ),
     );
   }
 }
