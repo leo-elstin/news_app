@@ -4,7 +4,7 @@ part of 'headlines_bloc.dart';
 abstract class HeadlinesEvent {}
 
 class Search extends HeadlinesEvent {
-  final String query;
+  final String? query;
 
   Search({this.query});
 }

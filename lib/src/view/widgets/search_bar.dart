@@ -31,19 +31,17 @@ class _SearchBarState extends State<SearchBar> {
       child: TextField(
         style: TextStyle(),
         controller: controller,
-        onChanged: search,
+        // onChanged: search,
         decoration: InputDecoration(
           border: InputBorder.none,
           hintText: 'Search',
-          suffix: BlocBuilder<HeadlinesBloc, HeadlinesState>(
+          suffixIcon: BlocBuilder<HeadlinesBloc, HeadlinesState>(
             builder: (context, state) {
-              if (state is Searching) {
-                return SizedBox(
-                  height: 16,
-                  width: 16,
-                  child: CircularProgressIndicator(),
-                );
-              }
+              // if (state is Searching) {
+              //   return Padding(padding: EdgeInsets.all(16),
+              //     child: CircularProgressIndicator(),
+              //   );
+              // }
 
               if (state is Searched) {
                 return InkWell(
@@ -51,10 +49,19 @@ class _SearchBarState extends State<SearchBar> {
                     controller.clear();
                     reset();
                   },
-                  child: Icon(Icons.close),
+                  child: Icon(
+                    Icons.close,
+                  ),
                 );
               }
-              return Icon(Icons.search);
+              return InkWell(
+                onTap: () {
+                  search(controller.text);
+                },
+                child: Icon(
+                  Icons.search,
+                ),
+              );
             },
           ),
           hintStyle: TextStyle(
