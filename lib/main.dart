@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:news_app/src/bloc/headlines/headlines_bloc.dart';
 import 'package:news_app/src/config/strings.dart';
 import 'package:news_app/src/view/screens/home/home.dart';
 
-void main() {
+void main() async {
+  await Hive.initFlutter();
   runApp(MyApp());
 }
 

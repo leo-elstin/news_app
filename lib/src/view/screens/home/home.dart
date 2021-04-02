@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/src/bloc/headlines/headlines_bloc.dart';
+import 'package:news_app/src/model/data_model/article.dart';
+import 'package:news_app/src/view/widgets/news_card.dart';
 import 'package:news_app/src/view/widgets/search_bar.dart';
 import 'package:news_app/src/view/widgets/shimmer.dart';
 
@@ -20,30 +22,55 @@ class _HomePageState extends State<HomePage> {
           preferredSize: Size.fromHeight(40),
         ),
       ),
-      body: BlocBuilder<HeadlinesBloc, HeadlinesState>(
-        buildWhen: (prv, crr) {
-          return crr is! HeadlinesInitial;
+      body: BlocListener<HeadlinesBloc, HeadlinesState>(
+        listener: (context, state) {
+          if (state is SearchError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error.message),
+              ),
+            );
+          }
         },
-        builder: (context, state) {
-          if (state is Searching) {
-            return Shimmer(
-              linearGradient: _shimmerGradient,
-              child: ListView.builder(
+        child: BlocBuilder<HeadlinesBloc, HeadlinesState>(
+          buildWhen: (prv, crr) {
+            return crr is! HeadlinesInitial;
+          },
+          builder: (context, state) {
+            if (state is Searching) {
+              return Shimmer(
+                linearGradient: _shimmerGradient,
+                child: ListView.builder(
                   itemCount: 5,
                   itemBuilder: (context, index) {
                     return ShimmerLoading(
                       isLoading: true,
-                      child: Card(
-                        child: SizedBox(
-                          child: ListTile(),
-                        ),
+                      child: NewsCard(
+                        article: null,
                       ),
                     );
-                  }),
-            );
-          }
-          return Offstage();
-        },
+                  },
+                ),
+              );
+            }
+
+            if (state is Searched) {
+              return ListView.separated(
+                separatorBuilder: (context, index) {
+                  return Divider();
+                },
+                itemCount: state.articles.length,
+                itemBuilder: (context, index) {
+                  Article article = state.articles[index];
+                  return NewsCard(
+                    article: article,
+                  );
+                },
+              );
+            }
+            return Offstage();
+          },
+        ),
       ),
     );
   }

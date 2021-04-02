@@ -26,11 +26,15 @@ dependencies:
   connectivity: ^3.0.3 # to check network connectivity
   http: ^0.13.1 # for network operations
   flutter_bloc: ^7.0.0 # for state management
-  hive: ^2.0.1  # to persist the data locally
+  hive: ^2.0.2  # to persist the data locally
+  hive_flutter: ^1.0.0
+  timeago: ^3.0.2 # to show minutes ago | seconds ago
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  hive_generator: ^1.0.1
+  build_runner: ^1.12.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

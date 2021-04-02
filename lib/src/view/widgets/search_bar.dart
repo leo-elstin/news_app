@@ -13,59 +13,65 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.symmetric(vertical: 8, horizontal: 9),
+      margin: EdgeInsets.only(
+        left: 4,
+        right: 4,
+        bottom: 4,
+      ),
       decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(4),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              offset: Offset(0, 2),
-              blurRadius: 2,
-            )
-          ]),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(4),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            offset: Offset(0, 1),
+            blurRadius: 1,
+          )
+        ],
+      ),
       padding: EdgeInsets.symmetric(
         horizontal: 16,
         vertical: 4,
       ),
-      child: TextField(
-        style: TextStyle(),
-        controller: controller,
-        // onChanged: search,
-        decoration: InputDecoration(
-          border: InputBorder.none,
-          hintText: 'Search',
-          suffixIcon: BlocBuilder<HeadlinesBloc, HeadlinesState>(
-            builder: (context, state) {
-              // if (state is Searching) {
-              //   return Padding(padding: EdgeInsets.all(16),
-              //     child: CircularProgressIndicator(),
-              //   );
-              // }
-
-              if (state is Searched) {
+      child: Expanded(
+        child: TextField(
+          style: TextStyle(),
+          onChanged: (value) {
+            if (value.isEmpty) {
+              reset();
+            }
+          },
+          controller: controller,
+          // onChanged: search,
+          decoration: InputDecoration(
+            border: InputBorder.none,
+            hintText: 'Search for News',
+            suffixIcon: BlocBuilder<HeadlinesBloc, HeadlinesState>(
+              builder: (context, state) {
+                if (state is Searched) {
+                  return InkWell(
+                    onTap: () {
+                      controller.clear();
+                      reset();
+                    },
+                    child: Icon(
+                      Icons.close,
+                    ),
+                  );
+                }
                 return InkWell(
                   onTap: () {
-                    controller.clear();
-                    reset();
+                    search(controller.text);
                   },
                   child: Icon(
-                    Icons.close,
+                    Icons.search,
                   ),
                 );
-              }
-              return InkWell(
-                onTap: () {
-                  search(controller.text);
-                },
-                child: Icon(
-                  Icons.search,
-                ),
-              );
-            },
-          ),
-          hintStyle: TextStyle(
-            color: Colors.black45,
+              },
+            ),
+            hintStyle: TextStyle(
+              color: Colors.black45,
+            ),
           ),
         ),
       ),
