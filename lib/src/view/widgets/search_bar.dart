@@ -33,45 +33,43 @@ class _SearchBarState extends State<SearchBar> {
         horizontal: 16,
         vertical: 4,
       ),
-      child: Expanded(
-        child: TextField(
-          style: TextStyle(),
-          onChanged: (value) {
-            if (value.isEmpty) {
-              reset();
-            }
-          },
-          controller: controller,
-          // onChanged: search,
-          decoration: InputDecoration(
-            border: InputBorder.none,
-            hintText: 'Search for News',
-            suffixIcon: BlocBuilder<HeadlinesBloc, HeadlinesState>(
-              builder: (context, state) {
-                if (state is Searched) {
-                  return InkWell(
-                    onTap: () {
-                      controller.clear();
-                      reset();
-                    },
-                    child: Icon(
-                      Icons.close,
-                    ),
-                  );
-                }
+      child: TextField(
+        style: TextStyle(),
+        onChanged: (value) {
+          if (value.isEmpty) {
+            reset();
+          }
+        },
+        controller: controller,
+        // onChanged: search,
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: 'Search for News',
+          suffixIcon: BlocBuilder<HeadlinesBloc, HeadlinesState>(
+            builder: (context, state) {
+              if (state is Searched) {
                 return InkWell(
                   onTap: () {
-                    search(controller.text);
+                    controller.clear();
+                    reset();
                   },
                   child: Icon(
-                    Icons.search,
+                    Icons.close,
                   ),
                 );
-              },
-            ),
-            hintStyle: TextStyle(
-              color: Colors.black45,
-            ),
+              }
+              return InkWell(
+                onTap: () {
+                  search(controller.text);
+                },
+                child: Icon(
+                  Icons.search,
+                ),
+              );
+            },
+          ),
+          hintStyle: TextStyle(
+            color: Colors.black45,
           ),
         ),
       ),

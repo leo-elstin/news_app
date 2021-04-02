@@ -23,38 +23,77 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
     HeadlinesEvent event,
   ) async* {
     if (event is Search) {
-      yield* _search(event.query!);
+      yield* _search(event.query!, false);
     }
 
     if (event is Reset) {
       yield HeadlinesInitial();
     }
+
+    if (event is Initial) {
+      yield* _search('', true);
+    }
   }
 
-  Stream<HeadlinesState> _search(String query) async* {
+  /// Method to search the headlines
+  /// @ [query] and [initial] is required
+  /// if [initial] it will show the last saved [headlines] if available
+  Stream<HeadlinesState> _search(String query, bool initial) async* {
     var headlines = await Hive.openBox('headlines');
-    if (query.isEmpty) {
+
+    // if query is empty alert the UI
+    if (query.isEmpty && !initial) {
       yield SearchError(
-        error: Error(message: 'Search text should not be empty!'),
+        error: Error(
+          message: 'Search text should not be empty!',
+        ),
       );
       return;
     }
+
+    if (initial) {
+      // notify the ui
+      yield Searching();
+      // if no internet notify the UI get the local data
+      List<Article> articles = headlines.values.toList().cast<Article>();
+
+      if (articles.isNotEmpty) {
+        // notify the UI
+        yield Searched(articles: articles);
+      }
+      return;
+    }
+    // checks it connectivity is available
     ConnectivityResult result = await Connectivity().checkConnectivity();
-    if (result == ConnectivityResult.none) {
+
+    if (result == ConnectivityResult.none && !initial) {
+      // show the error
       yield SearchError(
-        error: Error(message: 'No internet connectivity available!'),
+        error: Error(
+          message:
+              '${initial ? 'Search for news ' : 'Offline content not available'}',
+        ),
       );
+
       return;
     }
 
     yield Searching();
+
+    // call the api to get the articles
     var resp = await _service.topHeadlines(query: query);
+    // if return type is [HeadlinesResponse]
     if (resp is HeadlinesResponse) {
+      // clear the articles to the hive box
       await headlines.clear();
+      // write the articles to the hive box
       await headlines.addAll(resp.articles);
 
+      // notify the UI
       yield Searched(articles: resp.articles);
-    } else if (resp is Error) {
+    }
+    // if return type is [HeadlinesResponse]
+    else if (resp is Error) {
       yield SearchError(error: resp);
     }
   }

@@ -16,13 +16,23 @@ class NewsCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           ClipRRect(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(8),
             child: article?.urlToImage == null
                 ? Container(
                     color: Colors.white,
                     height: 150,
                   )
-                : Image.network(article!.urlToImage!),
+                : Container(
+                    child: Image.network(
+                      article!.urlToImage!,
+                      // placeholder: (context, url) {
+                      //   return Container(
+                      //     color: Colors.grey,
+                      //     height: 100,
+                      //   );
+                      // },
+                    ),
+                  ),
           ),
           SizedBox(
             height: 8,

@@ -4,10 +4,12 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:news_app/src/bloc/headlines/headlines_bloc.dart';
 import 'package:news_app/src/config/strings.dart';
+import 'package:news_app/src/model/data_model/article.dart';
 import 'package:news_app/src/view/screens/home/home.dart';
 
 void main() async {
   await Hive.initFlutter();
+  Hive.registerAdapter(ArticleAdapter());
   runApp(MyApp());
 }
 

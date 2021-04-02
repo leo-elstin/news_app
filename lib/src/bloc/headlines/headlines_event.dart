@@ -10,5 +10,7 @@ class Search extends HeadlinesEvent {
 }
 
 class Reset extends HeadlinesEvent {
+}
 
+class Initial extends HeadlinesEvent {
 }

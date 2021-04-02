@@ -29,6 +29,7 @@ dependencies:
   hive: ^2.0.2  # to persist the data locally
   hive_flutter: ^1.0.0
   timeago: ^3.0.2 # to show minutes ago | seconds ago
+  cached_network_image: ^3.0.0 # to cache the image
 
 dev_dependencies:
   flutter_test:

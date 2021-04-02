@@ -13,6 +13,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+      BlocProvider.of<HeadlinesBloc>(context).add(Initial());
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -34,12 +42,12 @@ class _HomePageState extends State<HomePage> {
         },
         child: BlocBuilder<HeadlinesBloc, HeadlinesState>(
           buildWhen: (prv, crr) {
-            return crr is! HeadlinesInitial;
+            return crr is Searching || crr is Searched;
           },
           builder: (context, state) {
             if (state is Searching) {
               return Shimmer(
-                linearGradient: _shimmerGradient,
+                linearGradient: shimmerGradient,
                 child: ListView.builder(
                   itemCount: 5,
                   itemBuilder: (context, index) {
@@ -68,26 +76,12 @@ class _HomePageState extends State<HomePage> {
                 },
               );
             }
-            return Offstage();
+            return Center(
+              child: Text('No articles found.'),
+            );
           },
         ),
       ),
     );
   }
-
-  var _shimmerGradient = LinearGradient(
-    colors: [
-      Color(0xFFEBEBF4),
-      Color(0xFFF4F4F4),
-      Color(0xFFEBEBF4),
-    ],
-    stops: [
-      0.1,
-      0.3,
-      0.4,
-    ],
-    begin: Alignment(-1.0, -0.3),
-    end: Alignment(1.0, 0.3),
-    tileMode: TileMode.clamp,
-  );
 }
