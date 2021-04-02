@@ -18,7 +18,7 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
 
   NewsService _service = NewsService();
   String _query = '';
-  Timer? timer;
+  StreamSubscription? _periodicSub;
 
   @override
   Stream<HeadlinesState> mapEventToState(
@@ -104,9 +104,7 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
   }
 
   Stream<HeadlinesState> _timer() async* {
-    StreamSubscription periodicSub;
-
-    periodicSub =
+    _periodicSub =
         new Stream.periodic(const Duration(seconds: 30), (v) => v).listen(
       (count) {
         if (_query.isNotEmpty) {
@@ -114,5 +112,11 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
         }
       },
     );
+  }
+
+  @override
+  Future<void> close() {
+    _periodicSub?.cancel();
+    return super.close();
   }
 }
