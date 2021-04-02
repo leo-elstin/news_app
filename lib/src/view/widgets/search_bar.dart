@@ -41,6 +41,9 @@ class _SearchBarState extends State<SearchBar> {
           }
         },
         controller: controller,
+        onSubmitted: (value) {
+          search(value);
+        },
         // onChanged: search,
         decoration: InputDecoration(
           border: InputBorder.none,

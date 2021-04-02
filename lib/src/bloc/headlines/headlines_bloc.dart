@@ -17,6 +17,8 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
   HeadlinesBloc() : super(HeadlinesInitial());
 
   NewsService _service = NewsService();
+  String _query = '';
+  Timer? timer;
 
   @override
   Stream<HeadlinesState> mapEventToState(
@@ -32,6 +34,7 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
 
     if (event is Initial) {
       yield* _search('', true);
+      yield* _timer();
     }
   }
 
@@ -80,6 +83,8 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
 
     yield Searching();
 
+    _query = query;
+
     // call the api to get the articles
     var resp = await _service.topHeadlines(query: query);
     // if return type is [HeadlinesResponse]
@@ -96,5 +101,18 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
     else if (resp is Error) {
       yield SearchError(error: resp);
     }
+  }
+
+  Stream<HeadlinesState> _timer() async* {
+    StreamSubscription periodicSub;
+
+    periodicSub =
+        new Stream.periodic(const Duration(seconds: 30), (v) => v).listen(
+      (count) {
+        if (_query.isNotEmpty) {
+          add(Search(query: _query));
+        }
+      },
+    );
   }
 }

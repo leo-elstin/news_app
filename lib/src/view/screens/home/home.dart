@@ -63,6 +63,11 @@ class _HomePageState extends State<HomePage> {
             }
 
             if (state is Searched) {
+              if (state.articles.isEmpty) {
+                return Center(
+                  child: Text('No articles found.'),
+                );
+              }
               return ListView.separated(
                 separatorBuilder: (context, index) {
                   return Divider();
