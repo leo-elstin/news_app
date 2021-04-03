@@ -1,5 +1,5 @@
 import 'package:http/http.dart' as http;
-import 'package:news_app/src/config/api_key.dart';
+import 'package:news_app/src/config/constants.dart';
 
 class ApiService {
   // singleton class
@@ -18,7 +18,7 @@ class ApiService {
   Future<String> get({String? path}) async {
     try {
       var response = await http.get(
-        Uri.parse('$_baseUrl/$path&apiKey=${ApiKey().key}'),
+        Uri.parse('$_baseUrl/$path&apiKey=${Constants().key}'),
       );
 
       return response.body;

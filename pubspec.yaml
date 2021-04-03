@@ -31,6 +31,7 @@ dependencies:
   timeago: ^3.0.2 # to show minutes ago | seconds ago
   cached_network_image: ^3.0.0 # to cache the image
   charts_flutter: ^0.10.0 # for Charts UI
+  intl: ^0.17.0 # for date formatting
 
 dev_dependencies:
   flutter_test:
