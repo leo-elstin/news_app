@@ -8,9 +8,17 @@ import 'package:news_app/src/model/data_model/article.dart';
 import 'package:news_app/src/view/screens/home/home.dart';
 
 void main() async {
+  // initiate the hive box and adapter
+  await initHive();
+  // entry point of the app
+  runApp(MyApp());
+}
+
+Future initHive() async {
   await Hive.initFlutter();
   Hive.registerAdapter(ArticleAdapter());
-  runApp(MyApp());
+  await Hive.openBox('settings');
+  return;
 }
 
 class MyApp extends StatelessWidget {

@@ -9,8 +9,12 @@ class Search extends HeadlinesEvent {
   Search({this.query});
 }
 
-class Reset extends HeadlinesEvent {
-}
+class Reset extends HeadlinesEvent {}
 
-class Initial extends HeadlinesEvent {
+class Initial extends HeadlinesEvent {}
+
+class AutoRefresh extends HeadlinesEvent {
+  final bool refresh;
+
+  AutoRefresh(this.refresh);
 }

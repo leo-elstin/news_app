@@ -28,7 +28,7 @@ class HeadlinesResponse {
       HeadlinesResponse(
         status: json["status"] == null ? null : json["status"],
         totalResults:
-            json["totalResults"] == null ? null : json["totalResults"],
+            json["totalResults"] == null ? 0 : json["totalResults"],
         articles: json["articles"] == null
             ? []
             : List<Article>.from(

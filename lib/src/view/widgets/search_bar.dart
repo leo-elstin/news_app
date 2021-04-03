@@ -13,14 +13,9 @@ class _SearchBarState extends State<SearchBar> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(
-        left: 4,
-        right: 4,
-        bottom: 4,
-      ),
+      margin: EdgeInsets.only(top: 4),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(4),
         boxShadow: [
           BoxShadow(
             color: Colors.black12,
@@ -50,7 +45,7 @@ class _SearchBarState extends State<SearchBar> {
           hintText: 'Search for News',
           suffixIcon: BlocBuilder<HeadlinesBloc, HeadlinesState>(
             builder: (context, state) {
-              if (state is Searched) {
+              if (state is Searched && !state.initial) {
                 return InkWell(
                   onTap: () {
                     controller.clear();

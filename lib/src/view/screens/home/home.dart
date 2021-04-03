@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/src/bloc/headlines/headlines_bloc.dart';
 import 'package:news_app/src/model/data_model/article.dart';
 import 'package:news_app/src/view/widgets/news_card.dart';
+import 'package:news_app/src/view/widgets/popup_menu.dart';
 import 'package:news_app/src/view/widgets/search_bar.dart';
 import 'package:news_app/src/view/widgets/shimmer.dart';
 
@@ -29,6 +30,7 @@ class _HomePageState extends State<HomePage> {
           child: SearchBar(),
           preferredSize: Size.fromHeight(40),
         ),
+        actions: [PopupMenu()],
       ),
       body: BlocListener<HeadlinesBloc, HeadlinesState>(
         listener: (context, state) {

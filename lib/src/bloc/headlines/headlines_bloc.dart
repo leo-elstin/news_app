@@ -17,8 +17,15 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
   HeadlinesBloc() : super(HeadlinesInitial());
 
   NewsService _service = NewsService();
+
+  // last searched query
   String _query = '';
+
+  // for autoRefreshTimer
   StreamSubscription? _periodicSub;
+
+  // default time duration
+  static const _defaultAutoRefreshTime = 30;
 
   @override
   Stream<HeadlinesState> mapEventToState(
@@ -32,9 +39,19 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
       yield HeadlinesInitial();
     }
 
+    if (event is AutoRefresh) {
+      if (!event.refresh) {
+        // if event is not refresh cancel the subscription
+        _periodicSub?.cancel();
+      } else {
+        // if event is  refresh start the subscription
+        yield* _autoRefresh();
+      }
+    }
+
     if (event is Initial) {
       yield* _search('', true);
-      yield* _timer();
+      yield* _autoRefresh();
     }
   }
 
@@ -60,10 +77,9 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
       // if no internet notify the UI get the local data
       List<Article> articles = headlines.values.toList().cast<Article>();
 
-      if (articles.isNotEmpty) {
-        // notify the UI
-        yield Searched(articles: articles);
-      }
+      // notify the UI
+      yield Searched(articles: articles, initial: true);
+
       return;
     }
     // checks it connectivity is available
@@ -81,10 +97,11 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
       return;
     }
 
+    // updates the UI to show shimmer
     yield Searching();
 
+    // keep the query to do autoRefresh
     _query = query;
-
     // call the api to get the articles
     var resp = await _service.topHeadlines(query: query);
     // if return type is [HeadlinesResponse]
@@ -103,19 +120,23 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
     }
   }
 
-  Stream<HeadlinesState> _timer() async* {
-    _periodicSub =
-        new Stream.periodic(const Duration(seconds: 30), (v) => v).listen(
-      (count) {
-        if (_query.isNotEmpty) {
-          add(Search(query: _query));
-        }
-      },
-    );
+  Stream<HeadlinesState> _autoRefresh() async* {
+    bool refresh = Hive.box('settings').get('refresh', defaultValue: true);
+    if (refresh) {
+      _periodicSub = new Stream.periodic(
+          const Duration(seconds: _defaultAutoRefreshTime), (v) => v).listen(
+        (count) {
+          if (_query.isNotEmpty) {
+            add(Search(query: _query));
+          }
+        },
+      );
+    }
   }
 
   @override
   Future<void> close() {
+    // close the subscription on dispose
     _periodicSub?.cancel();
     return super.close();
   }

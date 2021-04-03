@@ -9,8 +9,12 @@ class Searching extends HeadlinesState {}
 
 class Searched extends HeadlinesState {
   final List<Article> articles;
+  final bool initial;
 
-  Searched({required this.articles});
+  Searched({
+    required this.articles,
+    this.initial = false,
+  });
 }
 
 class SearchError extends HeadlinesState {
