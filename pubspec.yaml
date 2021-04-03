@@ -27,9 +27,10 @@ dependencies:
   http: ^0.13.1 # for network operations
   flutter_bloc: ^7.0.0 # for state management
   hive: ^2.0.2  # to persist the data locally
-  hive_flutter: ^1.0.0
+  hive_flutter: ^1.0.0 # hive wrapper for flutter
   timeago: ^3.0.2 # to show minutes ago | seconds ago
   cached_network_image: ^3.0.0 # to cache the image
+  charts_flutter: ^0.10.0 # for Charts UI
 
 dev_dependencies:
   flutter_test:
