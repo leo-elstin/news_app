@@ -1,16 +1,42 @@
-# news_app
+# News App
+Please Note :
 
-A new flutter app to show the news based on the newapi.org for sensibull assignment.
+```sh
+flutter --version
 
-## Getting Started
+Flutter 2.0.1 • channel stable • https://github.com/flutter/flutter.git
+Framework • revision c5a4b4029c (4 weeks ago) • 2021-03-04 09:47:48 -0800
+Engine • revision 40441def69
+Tools • Dart 2.12.0
+```
+#### Download : [apk](https://github.com/leoelstin/news_app/raw/master/apk/app-release.apk)
+## Features
 
-This project is a starting point for a Flutter application.
+- BLoc For state management
+- Offline presistant with Hive
+- Persist data for headlines
+- View Interest over time as graph view
+- Auto refresh news every 30 seconds
+- ability to turn on/off auto refresh
 
-A few resources to get you started if this is your first Flutter project:
+## Plugins used
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+The Followinf first party plugins are used
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+| Plugin | README |
+| ------ | ------ |
+| [Hive](https://pub.dev/packages/hive) | For keeping the data locally |
+| [Flutter Bloc](https://pub.dev/packages/flutter_bloc) | For State Management and Bloc Pattern |
+| [timeAgo](https://pub.dev/packages/timeago) | A library useful for creating fuzzy timestamps. (e.g. "5 minutes ago") |
+| [intl](https://pub.dev/packages/intl) | For Date formating |
+| [connectivity](https://pub.dev/packages/connectivity) | to discover network connectivity |
+| [syncfusion_flutter_charts](https://pub.dev/packages/syncfusion_flutter_charts) | For interactive charts |
+
+## Development
+To build and run this project:
+
+1. Get Flutter [here](https://flutter.dev) if you don't already have it
+2. Clone this repository.
+3. `cd` into the repo folder.
+4. run `flutter packages pub run build_runner build`
+4. run `flutter run`
