@@ -14,16 +14,39 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   String _query = '';
 
   @override
   void initState() {
     super.initState();
+    // lifecycle observer
+    WidgetsBinding.instance?.addObserver(this);
+
+    // gets the saved query value from db
     _query = Hive.box('settings').get('query', defaultValue: '');
+
+    // calls the  bloc event when the UI is ready
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
       BlocProvider.of<HeadlinesBloc>(context).add(Initial(_query));
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    // removed lifecycle observer
+    WidgetsBinding.instance?.removeObserver(this);
+  }
+
+  // life cycle listener
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+
+    // stop auto refresh when app paused
+    BlocProvider.of<HeadlinesBloc>(context).add(
+      AutoRefresh(state == AppLifecycleState.resumed),
+    );
   }
 
   @override

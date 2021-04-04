@@ -24,6 +24,9 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
   // for autoRefreshTimer
   StreamSubscription? _periodicSub;
 
+  // for connectivity
+  StreamSubscription? _connectivity;
+
   // default time duration
   static const _defaultAutoRefreshTime = 30;
 
@@ -134,6 +137,10 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
     bool refresh = Hive.box('settings').get('refresh', defaultValue: true);
     ConnectivityResult result = await Connectivity().checkConnectivity();
 
+    // cancel the previous subscription if any
+    try {
+      _periodicSub?.cancel();
+    } catch (e) {}
     if (refresh) {
       _periodicSub = new Stream.periodic(
           const Duration(seconds: _defaultAutoRefreshTime), (v) => v).listen(
@@ -150,12 +157,13 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
   Future<void> close() {
     // close the subscription on dispose
     _periodicSub?.cancel();
+    _connectivity?.cancel();
     return super.close();
   }
 
   Stream<HeadlinesState> _networkChange() async* {
     // to update ui based on network change
-    Connectivity()
+    _connectivity = Connectivity()
         .onConnectivityChanged
         .listen((ConnectivityResult state) async {
       if (state != ConnectivityResult.none && _query.isNotEmpty) {
