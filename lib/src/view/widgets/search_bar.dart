@@ -3,6 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/src/bloc/headlines/headlines_bloc.dart';
 
 class SearchBar extends StatefulWidget {
+  final ValueChanged<String>? query;
+
+  const SearchBar({Key? key, this.query}) : super(key: key);
+
   @override
   _SearchBarState createState() => _SearchBarState();
 }
@@ -34,6 +38,9 @@ class _SearchBarState extends State<SearchBar> {
           if (value.isEmpty) {
             reset();
           }
+
+          // call back
+          widget.query!(value);
         },
         controller: controller,
         onSubmitted: (value) {

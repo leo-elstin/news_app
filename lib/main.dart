@@ -5,7 +5,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'package:news_app/src/bloc/headlines/headlines_bloc.dart';
 import 'package:news_app/src/config/strings.dart';
 import 'package:news_app/src/model/data_model/article.dart';
-import 'package:news_app/src/view/screens/home/home.dart';
+import 'package:news_app/src/view/routes.dart';
 
 void main() async {
   // initiate the hive box and adapter
@@ -37,7 +37,7 @@ class MyApp extends StatelessWidget {
         theme: ThemeData(
           primarySwatch: Colors.blue,
         ),
-        home: HomePage(),
+        routes: routes,
       ),
     );
   }

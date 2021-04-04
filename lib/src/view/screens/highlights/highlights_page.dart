@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class HighlightsPage extends StatefulWidget {
+  static const route = '/highlights';
+
   @override
   _HighlightsPageState createState() => _HighlightsPageState();
 }

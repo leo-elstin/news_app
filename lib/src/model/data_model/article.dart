@@ -33,15 +33,15 @@ class Article extends HiveObject {
   String query;
 
   factory Article.fromJson(Map<String, dynamic> json) => Article(
-        author: json["author"] == null ? null : json["author"],
-        title: json["title"] == null ? null : json["title"],
-        description: json["description"] == null ? null : json["description"],
-        url: json["url"] == null ? null : json["url"],
-        urlToImage: json["urlToImage"] == null ? null : json["urlToImage"],
+        author: json["author"] == null ? '' : json["author"],
+        title: json["title"] == null ? '' : json["title"],
+        description: json["description"] == null ? '' : json["description"],
+        url: json["url"] == null ? '' : json["url"],
+        urlToImage: json["urlToImage"] == null ? '' : json["urlToImage"],
         publishedAt: json["publishedAt"] == null
             ? DateTime.now()
             : DateTime.parse(json["publishedAt"]),
-        content: json["content"] == null ? null : json["content"],
+        content: json["content"] == null ? '' : json["content"],
       );
 
   Map<String, dynamic> toJson() => {

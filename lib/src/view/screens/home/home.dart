@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:news_app/src/bloc/headlines/headlines_bloc.dart';
 import 'package:news_app/src/model/data_model/article.dart';
+import 'package:news_app/src/view/routes.dart';
 import 'package:news_app/src/view/widgets/news_card.dart';
 import 'package:news_app/src/view/widgets/popup_menu.dart';
 import 'package:news_app/src/view/widgets/search_bar.dart';
@@ -13,6 +14,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String _query = '';
+
   @override
   void initState() {
     super.initState();
@@ -27,10 +30,34 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('NEWS App'),
         bottom: PreferredSize(
-          child: SearchBar(),
+          child: SearchBar(
+            query: (value) {
+              _query = value;
+            },
+          ),
           preferredSize: Size.fromHeight(40),
         ),
         actions: [PopupMenu()],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        color: Theme.of(context).primaryColor,
+        child: SafeArea(
+          child: Container(
+            height: kToolbarHeight,
+            child: TextButton(
+              onPressed: () {
+                // named navigation
+                Navigator.pushNamed(context, highlightPage);
+              },
+              child: Text(
+                'Interest Over Time',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+        ),
       ),
       body: BlocListener<HeadlinesBloc, HeadlinesState>(
         listener: (context, state) {
