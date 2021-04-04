@@ -134,11 +134,11 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
     bool refresh = Hive.box('settings').get('refresh', defaultValue: true);
     ConnectivityResult result = await Connectivity().checkConnectivity();
 
-    if (refresh && result != ConnectivityResult.none) {
+    if (refresh) {
       _periodicSub = new Stream.periodic(
           const Duration(seconds: _defaultAutoRefreshTime), (v) => v).listen(
         (count) {
-          if (_query.isNotEmpty) {
+          if (_query.isNotEmpty && result != ConnectivityResult.none) {
             add(Search(query: _query));
           }
         },
