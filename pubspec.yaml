@@ -29,7 +29,6 @@ dependencies:
   hive: ^2.0.2  # to persist the data locally
   hive_flutter: ^1.0.0 # hive wrapper for flutter
   timeago: ^3.0.2 # to show minutes ago | seconds ago
-  cached_network_image: ^3.0.0 # to cache the image
   syncfusion_flutter_charts: ^19.1.54+1 # for Charts UI
   intl: ^0.17.0 # for date formatting
 
