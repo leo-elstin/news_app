@@ -11,7 +11,17 @@ class Search extends HeadlinesEvent {
 
 class Reset extends HeadlinesEvent {}
 
-class Initial extends HeadlinesEvent {}
+class Initial extends HeadlinesEvent {
+  final String query;
+
+  Initial(this.query);
+}
+
+class NetworkConnection extends HeadlinesEvent {
+  final bool available;
+
+  NetworkConnection(this.available);
+}
 
 class AutoRefresh extends HeadlinesEvent {
   final bool refresh;

@@ -17,6 +17,12 @@ class Searched extends HeadlinesState {
   });
 }
 
+class NetworkState extends HeadlinesState {
+  final bool available;
+
+  NetworkState(this.available);
+}
+
 class SearchError extends HeadlinesState {
   final Error error;
 

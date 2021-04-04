@@ -9,8 +9,13 @@ class Fetching extends InterestsState {}
 
 class Fetched extends InterestsState {
   final List<InterestData> interests;
+  final int max;
 
-  Fetched(this.interests);
+  Fetched(this.interests, {required this.max});
 }
 
-class FetchError extends InterestsState {}
+class FetchError extends InterestsState {
+  final Error error;
+
+  FetchError(this.error);
+}

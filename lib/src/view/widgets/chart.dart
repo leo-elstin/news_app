@@ -1,47 +1,50 @@
-import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:flutter/material.dart';
 import 'package:news_app/src/model/data_model/interest_data.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 
-class SimpleBarChart extends StatelessWidget {
-  final List<charts.Series<InterestData, String>> seriesList;
-  final bool animate;
+class ChartView extends StatefulWidget {
+  final List<InterestData> chartData;
+  final int maxCount;
 
-  SimpleBarChart(this.seriesList, {this.animate = false});
+  const ChartView({Key? key, required this.chartData, this.maxCount = 0})
+      : super(key: key);
 
-  /// Creates a [BarChart] with sample data and no transition.
-  factory SimpleBarChart.create(var data) {
-    return new SimpleBarChart(
-      _createChart(data),
-      // Disable animations for image tests.
-      animate: false,
+  @override
+  _ChartViewState createState() => _ChartViewState();
+}
+
+class _ChartViewState extends State<ChartView> {
+  @override
+  Widget build(BuildContext context) {
+    return _buildAnimationBarChart();
+  }
+
+  SfCartesianChart _buildAnimationBarChart() {
+    return SfCartesianChart(
+      plotAreaBorderWidth: 0,
+      primaryXAxis: CategoryAxis(majorGridLines: MajorGridLines(width: 0)),
+      primaryYAxis: NumericAxis(
+        majorGridLines: MajorGridLines(width: 0),
+        minimum: 0,
+        maximum: widget.maxCount.toDouble(),
+      ),
+      series: _getDefaultBarSeries(),
     );
+  }
+
+  /// The method has retured the bar series.
+  List<ColumnSeries<InterestData, String>> _getDefaultBarSeries() {
+    return <ColumnSeries<InterestData, String>>[
+      ColumnSeries<InterestData, String>(
+        dataSource: widget.chartData,
+        xValueMapper: (InterestData item, _) => item.day,
+        yValueMapper: (InterestData item, _) => item.articlesCount,
+      ),
+    ];
   }
 
   @override
-  Widget build(BuildContext context) {
-    return new charts.BarChart(
-      seriesList,
-      animate: animate,
-    );
-  }
-
-  /// Create one series with sample hard coded data.
-  static List<charts.Series<InterestData, String>> _createChart(var data) {
-    // final data = [
-    //   new InterestData('2014', 5),
-    //   new InterestData('2015', 25),
-    //   new InterestData('2016', 100),
-    //   new InterestData('2017', 75),
-    // ];
-
-    return [
-      new charts.Series<InterestData, String>(
-        id: 'Articles',
-        colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
-        domainFn: (InterestData interest, _) => interest.day,
-        measureFn: (InterestData interest, _) => interest.articlesCount,
-        data: data,
-      )
-    ];
+  void dispose() {
+    super.dispose();
   }
 }

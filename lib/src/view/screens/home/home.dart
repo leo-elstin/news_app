@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hive/hive.dart';
 import 'package:news_app/src/bloc/headlines/headlines_bloc.dart';
 import 'package:news_app/src/model/data_model/article.dart';
 import 'package:news_app/src/view/routes.dart';
+import 'package:news_app/src/view/widgets/loading_view.dart';
 import 'package:news_app/src/view/widgets/news_card.dart';
 import 'package:news_app/src/view/widgets/popup_menu.dart';
 import 'package:news_app/src/view/widgets/search_bar.dart';
-import 'package:news_app/src/view/widgets/shimmer.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -19,8 +20,9 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _query = Hive.box('settings').get('query', defaultValue: '');
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
-      BlocProvider.of<HeadlinesBloc>(context).add(Initial());
+      BlocProvider.of<HeadlinesBloc>(context).add(Initial(_query));
     });
   }
 
@@ -28,15 +30,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         title: Text('NEWS App'),
-        bottom: PreferredSize(
-          child: SearchBar(
-            query: (value) {
-              _query = value;
-            },
-          ),
-          preferredSize: Size.fromHeight(40),
-        ),
         actions: [PopupMenu()],
       ),
       bottomNavigationBar: BottomAppBar(
@@ -47,7 +42,7 @@ class _HomePageState extends State<HomePage> {
             child: TextButton(
               onPressed: () {
                 // named navigation
-                Navigator.pushNamed(context, highlightPage);
+                Navigator.pushNamed(context, highlightPage, arguments: _query);
               },
               child: Text(
                 'Interest Over Time',
@@ -69,51 +64,51 @@ class _HomePageState extends State<HomePage> {
             );
           }
         },
-        child: BlocBuilder<HeadlinesBloc, HeadlinesState>(
-          buildWhen: (prv, crr) {
-            return crr is Searching || crr is Searched;
-          },
-          builder: (context, state) {
-            if (state is Searching) {
-              return Shimmer(
-                linearGradient: shimmerGradient,
-                child: ListView.builder(
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    return ShimmerLoading(
-                      isLoading: true,
-                      child: NewsCard(
-                        article: null,
-                      ),
-                    );
-                  },
-                ),
-              );
-            }
-
-            if (state is Searched) {
-              if (state.articles.isEmpty) {
-                return Center(
-                  child: Text('No articles found.'),
-                );
-              }
-              return ListView.separated(
-                separatorBuilder: (context, index) {
-                  return Divider();
+        child: Column(
+          children: [
+            SearchBar(
+              defaultValue: _query,
+              query: (value) {
+                _query = value;
+              },
+            ),
+            Expanded(
+              child: BlocBuilder<HeadlinesBloc, HeadlinesState>(
+                buildWhen: (prv, crr) {
+                  return crr is Searching || crr is Searched;
                 },
-                itemCount: state.articles.length,
-                itemBuilder: (context, index) {
-                  Article article = state.articles[index];
-                  return NewsCard(
-                    article: article,
+                builder: (context, state) {
+                  if (state is Searching) {
+                    return LoadingView();
+                  }
+
+                  if (state is Searched) {
+                    if (state.articles.isEmpty) {
+                      return Center(
+                        child: Text('No articles found.'),
+                      );
+                    }
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      separatorBuilder: (context, index) {
+                        return Divider();
+                      },
+                      itemCount: state.articles.length,
+                      itemBuilder: (context, index) {
+                        Article article = state.articles[index];
+                        return NewsCard(
+                          article: article,
+                        );
+                      },
+                    );
+                  }
+                  return Center(
+                    child: Text('No articles found.'),
                   );
                 },
-              );
-            }
-            return Center(
-              child: Text('No articles found.'),
-            );
-          },
+              ),
+            ),
+          ],
         ),
       ),
     );

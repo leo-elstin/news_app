@@ -13,5 +13,5 @@ class Constants {
 
   String _apiKey = 'c9230c1bef5b4c5187348725897833cf';
 
-  var dateFormat = DateFormat('YYYY-MM-dd');
+  var dateFormat = DateFormat('yyyy-MM-dd');
 }

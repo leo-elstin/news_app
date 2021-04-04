@@ -49,9 +49,15 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
       }
     }
 
+    if (event is NetworkConnection) {
+      yield NetworkState(event.available);
+    }
+
     if (event is Initial) {
-      yield* _search('', true);
+      yield* _search(event.query, true);
       yield* _autoRefresh();
+
+      yield* _networkChange();
     }
   }
 
@@ -60,6 +66,9 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
   /// if [initial] it will show the last saved [headlines] if available
   Stream<HeadlinesState> _search(String query, bool initial) async* {
     var headlines = await Hive.openBox('headlines');
+
+    // add the query to db for using in next launch
+    Hive.box('settings').put('query', '$query');
 
     // if query is empty alert the UI
     if (query.isEmpty && !initial) {
@@ -86,11 +95,12 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
     ConnectivityResult result = await Connectivity().checkConnectivity();
 
     if (result == ConnectivityResult.none && !initial) {
+      yield NetworkState(false);
       // show the error
       yield SearchError(
         error: Error(
           message:
-              '${initial ? 'Search for news ' : 'Offline content not available'}',
+              '${initial ? 'Search for news ' : 'Network connectivity not available'}',
         ),
       );
 
@@ -122,7 +132,9 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
 
   Stream<HeadlinesState> _autoRefresh() async* {
     bool refresh = Hive.box('settings').get('refresh', defaultValue: true);
-    if (refresh) {
+    ConnectivityResult result = await Connectivity().checkConnectivity();
+
+    if (refresh && result != ConnectivityResult.none) {
       _periodicSub = new Stream.periodic(
           const Duration(seconds: _defaultAutoRefreshTime), (v) => v).listen(
         (count) {
@@ -139,5 +151,17 @@ class HeadlinesBloc extends Bloc<HeadlinesEvent, HeadlinesState> {
     // close the subscription on dispose
     _periodicSub?.cancel();
     return super.close();
+  }
+
+  Stream<HeadlinesState> _networkChange() async* {
+    // to update ui based on network change
+    Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult state) async {
+      if (state != ConnectivityResult.none && _query.isNotEmpty) {
+        add(Search(query: _query));
+      }
+      add(NetworkConnection(state != ConnectivityResult.none));
+    });
   }
 }
